@@ -40,7 +40,7 @@ Then edit the values marked `# <--`:
 | Value | File(s) | Default |
 |---|---|---|
 | Vault address | `deploy/overlays/okd/kustomization.yaml` | `https://vault.example.com:8200` |
-| Postgres host / port / database | overlay `DB_HOST`, `DB_PORT`, `DB_NAME` | `homelab-pgd-proxy.pgd-group-homelab.svc:6432`, `app` |
+| Postgres host / port / database | overlay `DB_HOST`, `DB_PORT`, `DB_NAME` | `homelab-pgd-proxy.pgd-group-homelab.svc:5432`, `app` |
 | Argo CD namespace | `argocd/**` | `openshift-gitops` |
 | Grafana namespace + instance label | `grafana/kustomization.yaml`, `grafana/grafanadashboard.yaml`, `argocd/apps/beacon-dashboard.yaml` | `grafana`, `dashboards: grafana` |
 | SNO? | overlay: uncomment the 1-replica patch | 2 replicas |

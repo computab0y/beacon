@@ -5,7 +5,7 @@ The database is the EDB Postgres Distributed group `homelab-pgd`
 so beacon does **not** get a database of its own: it uses schema `beacon`
 inside `app`, created by the migration Job (`migrations/V*.sql`).
 The app connects through the PGD connection manager
-`homelab-pgd-proxy.pgd-group-homelab.svc:6432`, which routes to the current
+`homelab-pgd-proxy.pgd-group-homelab.svc:5432`, which routes to the current
 write leader.
 
 The login role `beacon` is a **managed role** on the `PGDGroup` (the operator

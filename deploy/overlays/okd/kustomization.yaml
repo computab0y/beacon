@@ -29,9 +29,6 @@ patches:
       path: /data/DB_HOST
       value: homelab-pgd-proxy.pgd-group-homelab.svc
     - op: replace
-      path: /data/DB_PORT
-      value: "6432"
-    - op: replace
       path: /data/DB_NAME
       value: app
   target:
