@@ -120,7 +120,7 @@ async def observe(request: Request, call_next):
             response = await call_next(request)
         except Exception as exc:  # unhandled error in a route
             metrics.ERRORS.labels(type=type(exc).__name__).inc()
-            db_down = isinstance(exc, (psycopg.OperationalError, PoolTimeout))
+            db_down = isinstance(exc, psycopg.OperationalError | PoolTimeout)
             log.error("database unavailable" if db_down else "unhandled exception",
                       exc_info=exc,
                       extra={"path": request.url.path, "method": request.method})
