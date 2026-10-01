@@ -16,7 +16,7 @@ ARG GIT_COMMIT=unknown
 LABEL org.opencontainers.image.title="beacon" \
       org.opencontainers.image.version="${APP_VERSION}" \
       org.opencontainers.image.revision="${GIT_COMMIT}" \
-      org.opencontainers.image.source="https://github.com/OWNER/beacon"
+      org.opencontainers.image.source="https://github.com/computab0y/beacon"
 
 WORKDIR /opt/app-root/src
 COPY --from=build --chown=1001:0 /opt/venv /opt/venv

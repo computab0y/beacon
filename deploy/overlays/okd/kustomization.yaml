@@ -8,7 +8,7 @@ resources:
 # build of main; Argo CD then rolls the new image out.
 images:
   - name: beacon
-    newName: ghcr.io/OWNER/beacon
+    newName: ghcr.io/computab0y/beacon
     newTag: 1.0.0
 labels:
   - pairs:

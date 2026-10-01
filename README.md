@@ -27,9 +27,12 @@ GitHub ──push──▶ GitHub Actions ──build──▶ GHCR
 
 ## 1. Make it yours
 
+The GitHub owner is already set to `computab0y` (repo `github.com/computab0y/beacon`,
+image `ghcr.io/computab0y/beacon`). To use a different account, replace it everywhere:
+
 ```bash
-# your GitHub user/org (lower case), then commit
-grep -rl OWNER . --exclude-dir=.git | xargs sed -i 's/OWNER/your-github-user/g'
+# change NEW-USER to the new GitHub user/org (lower case); computab0y is what gets replaced
+grep -rl computab0y . --exclude-dir=.git | xargs sed -i 's/computab0y/NEW-USER/g'
 ```
 
 Then edit the values marked `# <--`:

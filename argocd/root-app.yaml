@@ -8,7 +8,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/OWNER/beacon.git
+    repoURL: https://github.com/computab0y/beacon.git
     targetRevision: main
     path: argocd/apps
   destination:
