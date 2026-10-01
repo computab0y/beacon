@@ -9,7 +9,7 @@ resources:
 images:
 - name: beacon
   newName: ghcr.io/computab0y/beacon
-  newTag: 1.0.0-8baa6ae
+  newTag: 1.0.0-c26aa60
 labels:
 - includeTemplates: true
   pairs:
@@ -18,6 +18,8 @@ labels:
     # EDB PGD group homelab-pgd: connect through the PGD connection manager
     # (routes to the current write leader) and use the replicated "app" DB.
 # Single-node cluster: one replica (the PDB is dropped from the base).
+    # EDB PGD group homelab-pgd: connect through the PGD connection manager
+    # (routes to the current write leader) and use the replicated "app" DB.
 patches:
 - patch: |-
     - op: replace
