@@ -12,6 +12,5 @@ resources:
   - deployment.yaml
   - service.yaml
   - route.yaml
-  - pdb.yaml
   - servicemonitor.yaml
   - prometheusrule.yaml

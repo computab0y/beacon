@@ -1,6 +1,0 @@
-# Applied into the PG4K Cluster's namespace by the beacon-db Argo CD Application.
-apiVersion: kustomize.config.k8s.io/v1beta1
-kind: Kustomization
-namespace: postgres          # <-- namespace of your PG4K Cluster
-resources:
-  - database.yaml

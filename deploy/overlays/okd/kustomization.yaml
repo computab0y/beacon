@@ -19,10 +19,26 @@ patches:
 - patch: |-
     - op: replace
       path: /data/VAULT_ADDR
-      value: https://vault.example.com:8200        # <-- your Vault
+      value: https://vault-vault.apps.okd.funky-bash.com
+    # EDB PGD group homelab-pgd: connect through the PGD connection manager
+    # (routes to the current write leader) and use the replicated "app" DB.
     - op: replace
       path: /data/DB_HOST
-      value: pg-main-rw.postgres.svc              # <-- <cluster>-rw.<namespace>.svc
+      value: homelab-pgd-proxy.pgd-group-homelab.svc
+    - op: replace
+      path: /data/DB_PORT
+      value: "6432"
+    - op: replace
+      path: /data/DB_NAME
+      value: app
   target:
     kind: ConfigMap
     name: beacon-config
+# Single-node cluster: one replica (the PDB is dropped from the base).
+- patch: |-
+    - op: replace
+      path: /spec/replicas
+      value: 1
+  target:
+    kind: Deployment
+    name: beacon

@@ -29,7 +29,6 @@ jobs:
       - name: Render manifests
         run: |
           kubectl kustomize deploy/overlays/okd > /dev/null
-          kubectl kustomize deploy/postgres > /dev/null
           kubectl kustomize grafana > /dev/null
 
   build:

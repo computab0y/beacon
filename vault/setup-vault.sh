@@ -131,10 +131,11 @@ fi
 cat <<EOF
 
 Done. Next:
-  1. Add the managed role to your PG4K Cluster '${PG_CLUSTER}' (see deploy/postgres/README.md):
-       spec.managed.roles: [{name: ${DB_USER}, ensure: present, login: true,
-                             passwordSecret: {name: ${DB_USER}-db-password}}]
-  2. Let Argo CD sync deploy/postgres (Database CR) and deploy/overlays/okd (app).
+  1. Add the managed role to the PGDGroup in '${PG_NS}' and grant it CREATE on
+     the database (see deploy/postgres/README.md):
+       spec.cnp.managed.roles: [{name: ${DB_USER}, ensure: present, login: true,
+                                 passwordSecret: {name: ${DB_USER}-db-password}}]
+  2. Let Argo CD sync deploy/overlays/okd (app).
   To rotate: re-run with a new DB_PASSWORD - PG4K reloads the role password and
   the app picks up the new Vault version within SECRET_REFRESH_SECONDS.
 EOF
