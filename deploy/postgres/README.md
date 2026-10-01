@@ -26,7 +26,7 @@ tables (`migrations/V*.sql`).
 Older PG4K without the `Database` CRD:
 
 ```bash
-oc exec -n postgres pg-main-1 -c postgres -- psql -c 'CREATE DATABASE beacon computab0y beacon'
+oc exec -n postgres pg-main-1 -c postgres -- psql -c 'CREATE DATABASE beacon OWNER beacon'
 ```
 
 `pg_hba`: the default PG4K rules allow password (scram) auth over TLS from any

@@ -45,7 +45,7 @@ jobs:
       - id: meta
         run: |
           version="$(cat VERSION)"
-          image="ghcr.io/${GITHUB_REPOSITORY_computab0y,,}/beacon"
+          image="ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/beacon"
           echo "version=${version}"                     >> "$GITHUB_OUTPUT"
           echo "tag=${version}-${GITHUB_SHA::7}"         >> "$GITHUB_OUTPUT"
           echo "image=${image}"                         >> "$GITHUB_OUTPUT"
