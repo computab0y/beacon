@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: beacon-config
+  annotations:
+    argocd.argoproj.io/sync-wave: "-1"
+data:
+  LOG_LEVEL: INFO
+  VAULT_ADDR: https://vault.example.com:8200   # overridden in the overlay
+  VAULT_AUTH_MOUNT: kubernetes
+  VAULT_ROLE: beacon
+  VAULT_KV_MOUNT: secret
+  VAULT_SECRET_PATH: beacon/config
+  VAULT_JWT_PATH: /var/run/secrets/vault/token
+  SECRET_REFRESH_SECONDS: "300"
+  DB_HOST: pg-main-rw.postgres.svc            # fallback; Vault's db_host wins
+  DB_PORT: "5432"
+  DB_NAME: beacon
+  DB_SCHEMA: beacon
+  DB_SSLMODE: require
+  HEALTH_INTERVAL_SECONDS: "15"
+  ENABLE_CHAOS_ENDPOINTS: "true"

@@ -1,0 +1,14 @@
+# Scraped by OKD user-workload monitoring (enableUserWorkload: true).
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: beacon
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: beacon
+  endpoints:
+    - port: http
+      path: /metrics
+      interval: 30s
+      scrapeTimeout: 10s

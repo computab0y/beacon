@@ -1,0 +1,18 @@
+# App-of-apps: apply this once (oc apply -f argocd/root-app.yaml) and Argo CD
+# manages everything under argocd/apps/ from Git.
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: beacon-root
+  namespace: openshift-gitops              # <-- your Argo CD namespace
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/OWNER/beacon.git
+    targetRevision: main
+    path: argocd/apps
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: openshift-gitops
+  syncPolicy:
+    automated: {prune: true, selfHeal: true}

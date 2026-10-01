@@ -1,0 +1,18 @@
+# Optional: only if Grafana is run by grafana-operator v5. Otherwise import
+# grafana/beacon-dashboard.json by hand and delete this file.
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: beacon-dashboard
+  namespace: openshift-gitops
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/OWNER/beacon.git
+    targetRevision: main
+    path: grafana
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: grafana                    # <-- namespace of your Grafana CR
+  syncPolicy:
+    automated: {prune: true, selfHeal: true}

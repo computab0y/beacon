@@ -1,0 +1,12 @@
+# Optional: for Grafana run by grafana-operator v5 (Argo CD app beacon-dashboard).
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: grafana                 # <-- namespace of your Grafana CR
+resources:
+  - grafanadashboard.yaml
+configMapGenerator:
+  - name: beacon-dashboard
+    files:
+      - beacon-dashboard.json
+generatorOptions:
+  disableNameSuffixHash: true

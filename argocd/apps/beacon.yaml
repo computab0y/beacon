@@ -1,0 +1,28 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: beacon
+  namespace: openshift-gitops
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/OWNER/beacon.git
+    targetRevision: main
+    path: deploy/overlays/okd
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: beacon
+  syncPolicy:
+    automated: {prune: true, selfHeal: true}
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true
+    managedNamespaceMetadata:
+      labels:
+        # Lets a namespace-scoped (OpenShift GitOps) Argo CD instance manage it.
+        argocd.argoproj.io/managed-by: openshift-gitops
+    retry:
+      limit: 5
+      backoff: {duration: 15s, factor: 2, maxDuration: 3m}

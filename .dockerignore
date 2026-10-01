@@ -1,0 +1,9 @@
+.git
+.github
+deploy
+argocd
+grafana
+vault
+tests
+**/__pycache__
+*.md

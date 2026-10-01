@@ -1,0 +1,33 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: beacon
+resources:
+  - ../../base
+
+# CI (.github/workflows/ci.yaml) rewrites newTag and the version label on every
+# build of main; Argo CD then rolls the new image out.
+images:
+  - name: beacon
+    newName: ghcr.io/OWNER/beacon
+    newTag: 1.0.0
+labels:
+  - pairs:
+      app.kubernetes.io/version: 1.0.0
+    includeSelectors: false
+    includeTemplates: true
+
+patches:
+  - target:
+      kind: ConfigMap
+      name: beacon-config
+    patch: |-
+      - op: replace
+        path: /data/VAULT_ADDR
+        value: https://vault.example.com:8200        # <-- your Vault
+      - op: replace
+        path: /data/DB_HOST
+        value: pg-main-rw.postgres.svc              # <-- <cluster>-rw.<namespace>.svc
+  # Single-node (SNO) clusters: one replica is plenty and the PDB would block drains.
+  # - target: {kind: Deployment, name: beacon}
+  #   patch: |-
+  #     - {op: replace, path: /spec/replicas, value: 1}

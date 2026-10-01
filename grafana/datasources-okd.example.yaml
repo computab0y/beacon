@@ -1,0 +1,60 @@
+# REFERENCE ONLY (not in kustomization.yaml). If your Grafana doesn't already
+# have these, this is how to point grafana-operator v5 at OKD's built-in stack.
+# The dashboard picks datasources via variables, so names don't matter.
+#
+# Token: a SA that can read metrics + application logs, e.g.
+#   oc create sa grafana-reader -n grafana
+#   oc adm policy add-cluster-role-to-user cluster-monitoring-view -z grafana-reader -n grafana
+#   oc adm policy add-cluster-role-to-user cluster-logging-application-view -z grafana-reader -n grafana
+#   oc create token grafana-reader -n grafana --duration=8760h   # -> secret grafana-reader-token key "token"
+---
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDatasource
+metadata:
+  name: okd-thanos
+  namespace: grafana
+spec:
+  instanceSelector:
+    matchLabels: {dashboards: grafana}
+  valuesFrom:
+    - targetPath: secureJsonData.httpHeaderValue1
+      valueFrom:
+        secretKeyRef: {name: grafana-reader-token, key: token}
+  datasource:
+    name: OKD Prometheus (Thanos)
+    type: prometheus
+    access: proxy
+    # Thanos querier: platform + user-workload metrics (incl. kube-state-metrics)
+    url: https://thanos-querier.openshift-monitoring.svc.cluster.local:9091
+    isDefault: true
+    jsonData:
+      httpHeaderName1: Authorization
+      tlsSkipVerify: true          # or mount the service-ca and set tlsAuthWithCACert
+      timeInterval: 30s
+    secureJsonData:
+      httpHeaderValue1: "Bearer ${token}"
+---
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDatasource
+metadata:
+  name: okd-loki-application
+  namespace: grafana
+spec:
+  instanceSelector:
+    matchLabels: {dashboards: grafana}
+  valuesFrom:
+    - targetPath: secureJsonData.httpHeaderValue1
+      valueFrom:
+        secretKeyRef: {name: grafana-reader-token, key: token}
+  datasource:
+    name: OKD Loki (application)
+    type: loki
+    access: proxy
+    # LokiStack gateway, "application" tenant (OpenShift Logging). Adjust the
+    # service name to your LokiStack: <lokistack>-gateway-http.<ns>.svc
+    url: https://logging-loki-gateway-http.openshift-logging.svc.cluster.local:8080/api/logs/v1/application/
+    jsonData:
+      httpHeaderName1: Authorization
+      tlsSkipVerify: true
+    secureJsonData:
+      httpHeaderValue1: "Bearer ${token}"

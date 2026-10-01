@@ -1,0 +1,13 @@
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDashboard
+metadata:
+  name: beacon
+spec:
+  instanceSelector:
+    matchLabels:
+      dashboards: grafana          # <-- label on your Grafana CR
+  folder: Beacon
+  resyncPeriod: 5m
+  configMapRef:
+    name: beacon-dashboard
+    key: beacon-dashboard.json

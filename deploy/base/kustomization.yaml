@@ -1,0 +1,17 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+labels:
+  - pairs:
+      app.kubernetes.io/name: beacon
+      app.kubernetes.io/part-of: beacon
+    includeSelectors: true
+resources:
+  - serviceaccount.yaml
+  - configmap.yaml
+  - migrate-job.yaml
+  - deployment.yaml
+  - service.yaml
+  - route.yaml
+  - pdb.yaml
+  - servicemonitor.yaml
+  - prometheusrule.yaml

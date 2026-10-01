@@ -1,0 +1,69 @@
+# Evaluated by the user-workload Thanos Ruler, so kube-state-metrics series for
+# this namespace are available too.
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: beacon
+spec:
+  groups:
+    - name: beacon.availability
+      rules:
+        - alert: BeaconNoReadyPods
+          expr: sum(beacon_up{job="beacon"}) == 0 or absent(beacon_build_info{job="beacon"})
+          for: 2m
+          labels: {severity: critical}
+          annotations:
+            summary: No beacon pod is ready
+            description: Every pod is failing its Vault or database dependency check, or no pod is being scraped.
+        - alert: BeaconDependencyUnhealthy
+          expr: min by (component, pod) (beacon_health_status{job="beacon"}) == 0
+          for: 2m
+          labels: {severity: warning}
+          annotations:
+            summary: "beacon {{ $labels.pod }}: {{ $labels.component }} unhealthy"
+            description: Check the pod logs in Grafana (Loki) for "dependency unhealthy".
+        - alert: BeaconPodsNotReady
+          expr: |
+            kube_deployment_status_replicas_available{deployment="beacon"}
+              < kube_deployment_spec_replicas{deployment="beacon"}
+          for: 10m
+          labels: {severity: warning}
+          annotations:
+            summary: beacon has fewer available replicas than desired
+        - alert: BeaconPodRestarting
+          expr: increase(kube_pod_container_status_restarts_total{container="beacon"}[15m]) > 2
+          labels: {severity: warning}
+          annotations:
+            summary: "beacon pod {{ $labels.pod }} restarted {{ $value | humanize }} times in 15m"
+        - alert: BeaconMixedVersions
+          expr: count(count by (version) (beacon_build_info{job="beacon"})) > 1
+          for: 30m
+          labels: {severity: warning}
+          annotations:
+            summary: More than one beacon version has been running for 30m (stuck rollout?)
+    - name: beacon.errors
+      rules:
+        - record: beacon:http_requests:rate5m
+          expr: sum by (route, status) (rate(beacon_http_requests_total{job="beacon"}[5m]))
+        - record: beacon:errors:rate5m
+          expr: sum by (type) (rate(beacon_errors_total{job="beacon"}[5m]))
+        - alert: BeaconHigh5xxRate
+          expr: |
+            sum(rate(beacon_http_requests_total{job="beacon",status=~"5..",route!~"/healthz.*"}[5m]))
+              / clamp_min(sum(rate(beacon_http_requests_total{job="beacon",route!~"/healthz.*"}[5m])), 1e-9)
+              > 0.05
+          for: 5m
+          labels: {severity: warning}
+          annotations:
+            summary: "beacon 5xx ratio is {{ $value | humanizePercentage }}"
+        - alert: BeaconApplicationErrors
+          expr: sum by (type) (increase(beacon_errors_total{job="beacon"}[10m])) > 5
+          labels: {severity: info}
+          annotations:
+            summary: "beacon logged {{ $value | humanize }} {{ $labels.type }} errors in 10m"
+        - alert: BeaconVaultSecretStale
+          expr: time() - max(beacon_vault_last_success_timestamp_seconds{job="beacon"}) > 900
+          for: 5m
+          labels: {severity: warning}
+          annotations:
+            summary: beacon has not refreshed its Vault secret for over 15 minutes
