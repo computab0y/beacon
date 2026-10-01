@@ -9,6 +9,7 @@ from collections.abc import Iterator
 from contextlib import contextmanager
 
 import psycopg
+import psycopg.sql
 from psycopg.rows import dict_row
 from psycopg_pool import ConnectionPool
 
@@ -33,7 +34,16 @@ def conninfo_from_secret(snap: SecretSnapshot) -> str:
         sslmode=settings.db_sslmode,
         application_name=f"{settings.app_name}-{settings.pod_name}"[:63],
         connect_timeout=5,
-        options=f"-c search_path={settings.db_schema},public",
+    )
+
+
+def _set_search_path(conn: psycopg.Connection) -> None:
+    # Set with SQL, not the libpq startup "options": the EDB PGD connection
+    # manager forwards that value as one quoted identifier ("beacon,public").
+    conn.execute(
+        psycopg.sql.SQL("SET search_path TO {}, public").format(
+            psycopg.sql.Identifier(settings.db_schema)
+        )
     )
 
 
@@ -51,6 +61,7 @@ class Database:
             min_size=settings.db_pool_min,
             max_size=settings.db_pool_max,
             kwargs={"row_factory": dict_row, "autocommit": True},
+            configure=_set_search_path,
             open=False,
             name="beacon",
         )
