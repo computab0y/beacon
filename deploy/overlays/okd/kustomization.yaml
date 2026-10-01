@@ -9,12 +9,15 @@ resources:
 images:
 - name: beacon
   newName: ghcr.io/computab0y/beacon
-  newTag: 1.0.0-2e84cac
+  newTag: 1.0.0-8baa6ae
 labels:
 - includeTemplates: true
   pairs:
     app.kubernetes.io/version: 1.0.0
 
+    # EDB PGD group homelab-pgd: connect through the PGD connection manager
+    # (routes to the current write leader) and use the replicated "app" DB.
+# Single-node cluster: one replica (the PDB is dropped from the base).
 patches:
 - patch: |-
     - op: replace
@@ -34,7 +37,6 @@ patches:
   target:
     kind: ConfigMap
     name: beacon-config
-# Single-node cluster: one replica (the PDB is dropped from the base).
 - patch: |-
     - op: replace
       path: /spec/replicas
