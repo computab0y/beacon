@@ -36,7 +36,7 @@ PGD replicates the DDL):
 ```bash
 LEADER=$(oc -n pgd-group-homelab get pgdgroup homelab-pgd -o jsonpath='{.status.PGD.writeLeadLastDetected}')
 oc -n pgd-group-homelab exec ${LEADER}-1 -c postgres -- \
-  psql -d app -c 'GRANT CREATE, CONNECT ON DATABASE app TO beacon'
+  psql -U postgres -d app -c 'GRANT CREATE, CONNECT ON DATABASE app TO beacon'
 ```
 
 `pg_hba`: the default rules allow password (scram) auth over TLS from any pod,
