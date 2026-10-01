@@ -26,6 +26,10 @@ spec:
           ensure: present
           login: true
           connectionLimit: 20
+          # PGD turns bigserial into distributed sequences; nextval() calls
+          # bdr.seq_nextval(), which only bdr_application members may run.
+          inRoles:
+            - bdr_application
           passwordSecret:
             name: beacon-db-password
 ```
